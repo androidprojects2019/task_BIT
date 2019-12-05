@@ -70,7 +70,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding, HomeViewMode
             public void onChanged(List<DataItem> dataItems) {
                 homeItems = dataItems;
                 adapter.changeData(homeItems);
-
+                databinding.progress.setVisibility(View.INVISIBLE);
             }
         });
         HomeViewModel.messageData.observe(this, new Observer<Integer>() {
@@ -86,7 +86,9 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding, HomeViewMode
         databinding.bio.setText(profile.getBio());
         databinding.location.setText(profile.getLocation());
         Glide.with(this).load(profile.getProfilePicture()).into(databinding.profileImage);
-        databinding.progress.setVisibility(View.INVISIBLE);
+         databinding.postsCounter.setText(profile.getCounts().getPosts()+"");
+        databinding.followersCounter.setText(profile.getCounts().getFollowers()+"");
+        databinding.followingCounter.setText(profile.getCounts().getFollowing()+"");
 
     }
 
@@ -95,16 +97,18 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding, HomeViewMode
         adapter.setOnItemClick(new HomeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos, DataItem item) {
-//                Bundle data = new Bundle();
-//                data.putString("image", item.getImage());
-//                ImageFragment imageFragment = new ImageFragment();
-//                imageFragment.setArguments(data);
-//                Fragment fragment = new ImageFragment();
-//                getSupportFragmentManager()
-//                        .beginTransaction()
-//                        .add(R.id.container,fragment)
-//                        .commit();
-             }
+                Bundle data = new Bundle();
+                data.putString("image", item.getImage());
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(item.getImage())));
+
+                ImageFragment imageFragment = new ImageFragment();
+                imageFragment.setArguments(data);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container,imageFragment)
+                        .addToBackStack("")
+                        .commit();
+            }
         });
         layoutManager = new GridLayoutManager(this, 3);
         databinding.recycler.setAdapter(adapter);
